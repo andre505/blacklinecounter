@@ -1,0 +1,74 @@
+# ===================================================
+# .gitignore for a .NET 9 Console Application
+# ===================================================
+
+## Build Folders ##
+[Bb]in/
+[Oo]bj/
+
+## NuGet ##
+# Ignore NuGet packages folder (restore on build)
+**/packages/*
+!**/packages/build/
+# Ignore generated package files
+*.nupkg
+# Ignore project lock and assets files
+project.assets.json
+project.nuget.cache
+*.nuget.props
+*.nuget.targets
+
+## .NET Core Tools ##
+# Local tools manifest & tool installation folder
+.dotnet/tools/
+.dotnet/tmpr
+
+## Visual Studio ##
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+## Rider ##
+.idea/
+
+## VS Code ##
+.vscode/
+
+## OS-generated ##
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+## Logs and databases ##
+*.log
+*.sql
+*.sqlite
+
+## Test result ##
+TestResults/
+*.trx
+*.coverage
+coverage*.xml
+
+## Roslyn ##
+*.ide.*
+
+## StyleCop ##
+.StyleCopReport.xml
+
+## Temporary files ##
+*.tmp
+*.temp
+~$*
+
+## Others you might add ##
+# if you have local secrets/config
+local.settings.json
+appsettings.Development.json

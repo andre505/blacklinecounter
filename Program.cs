@@ -35,7 +35,7 @@ namespace VerticalBlackLineCounter
                 }
 
                 // Executing the line counting function
-                int lineCount = CountVerticalLines(imagePath);
+                int lineCount = CountVerticalBlackLines(imagePath);
                 Console.WriteLine($"The number of vertical black lines in the image is: {lineCount}");
             }
             catch (Exception ex)
@@ -44,58 +44,77 @@ namespace VerticalBlackLineCounter
             }
         }
 
-        static int CountVerticalLines(string imagePath)
+        static int CountVerticalBlackLines(string absoluteImagePath)
         {
-            using (var bitmap = new Bitmap(imagePath))
+            // Loading image into a bitmap object.
+            using var bmp = new Bitmap(absoluteImagePath);
+            int width = bmp.Width;
+            int height = bmp.Height;
+
+            // for each column, counting how many black‐pixel runs (segments) appear
+            int[] segmentsPerColumn = new int[width];
+            for (int x = 0; x < width; x++)
             {
-                int width = bitmap.Width;
-                int height = bitmap.Height;
+                int runLength = 0; //counts the current run length of black pixels
+                int countRuns = 0; //counts how many separate black runs encountered. 
 
-                // Tracking which columns contain at least one black pixel
-                bool[] hasBlackPixel = new bool[width];
-
-                for (int x = 0; x < width; x++)
+                for (int y = 0; y < height; y++)
                 {
-                    // scanning every row in each column
-                    for (int y = 0; y < height; y++)
+                    if (IsBlack(bmp.GetPixel(x, y)))
                     {
-                        if (IsBlack(bitmap.GetPixel(x, y)))
-                        {
-                            hasBlackPixel[x] = true;
-                            break;
-                        }
+                        runLength++;
+                    }
+                    else if (runLength > 0)
+                    {
+                        // we hit white after a run
+                        countRuns++;
+                        runLength = 0; //resetting for next run.
                     }
                 }
+                // account for a run that goes to the bottom
+                if (runLength > 0)
+                    countRuns++;
 
-                // Count runs of adjacent black columns as single lines
-                int lineCount = 0; //total black lines found
-                bool inBlackLine = false;
-
-                for (int x = 0; x < width; x++)
-                {
-                    if (hasBlackPixel[x])
-                    {
-                        if (!inBlackLine)
-                        {
-                            lineCount++;
-                            inBlackLine = true;
-                        }
-                    }
-                    else
-                    {
-                        // Black line run ended
-                        inBlackLine = false;
-                    }
-                }
-
-                //Return total black lines found
-                return lineCount;
+                segmentsPerColumn[x] = countRuns;
             }
+
+            // Cluster adjacent columns into one line,
+            int lineCount = 0;
+            bool inCluster = false;
+            int maxInThisCluster = 0;
+
+            for (int x = 0; x < width; x++)
+            {
+                if (segmentsPerColumn[x] > 0)
+                {
+                    inCluster = true;
+                    maxInThisCluster = Math.Max(maxInThisCluster, segmentsPerColumn[x]);
+                }
+                else if (inCluster)
+                {
+                    // cluster ended, adding cluster lines
+                    lineCount += maxInThisCluster;
+                    inCluster = false; //resetting for the next line
+                    maxInThisCluster = 0;
+                }
+            }
+            // if image ends, while in a line, adding its runs as well. 
+            if (inCluster)
+                lineCount += maxInThisCluster;
+
+            return lineCount;
         }
 
         static bool IsBlack(Color c)
         {
-            return c.ToArgb() == Color.Black.ToArgb();
+            int avg = (c.R + c.G + c.B) / 3;
+            return avg < 100;
+        }
+
+        //Switched from the below method as more line counts than exist were returned. Rsearch showed that JPEG compression from MS Paint will introduce tiny artifacts—pixels that look black to the eye but are not actually black, 
+        static bool DeprecatedIsBlackMethod(Color color)
+        {
+            return color.ToArgb() == Color.Black.ToArgb();
         }
     }
 }

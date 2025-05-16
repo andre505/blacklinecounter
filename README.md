@@ -1,4 +1,4 @@
-# TMNMC VerticalBlackLineCounter
+# TMMC VerticalBlackLineCounter
 
 ## Overview
 The VerticalBlackLineCounter application counts the number of vertical black lines in a .jpg image.

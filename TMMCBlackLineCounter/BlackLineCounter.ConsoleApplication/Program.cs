@@ -31,7 +31,7 @@ namespace VerticalBlackLineCounter
                 }
 
                 // Validating file extension
-                if (!Path.GetExtension(imagePath).Equals(".jpg", StringComparison.OrdinalIgnoreCase) || !Path.GetExtension(imagePath).Equals(".jpeg"))
+                if (!Path.GetExtension(imagePath).Equals(".jpg", StringComparison.OrdinalIgnoreCase))
                 {
                     Console.WriteLine("Error: File must be a JPG image.");
                     return;

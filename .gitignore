@@ -72,3 +72,5 @@ coverage*.xml
 # if you have local secrets/config
 local.settings.json
 appsettings.Development.json
+/readme.txt
+/Summary of Unexpected Challenges Tackled.pdf
